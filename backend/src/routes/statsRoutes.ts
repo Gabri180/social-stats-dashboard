@@ -3,51 +3,42 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/authMiddleware';
 import { getTikTokStats } from '../services/stats/tiktokStats';
 import { getYouTubeStats } from '../services/stats/youtubeStats';
-import { getInstagramStats } from '../services/stats/instagramStats';
-import { getTwitchStats } from '../services/stats/twitchStats';
-import { db } from '../db';
-import { platforms } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
 
 const router = Router();
 
-router.use(authMiddleware);
-
-router.get('/:platform', async (req, res) => {
+// Endpoint para obtener stats de TikTok
+router.get('/tiktok', authMiddleware, async (req: any, res: any) => {
   try {
-    const userId = (req as any).userId;
-    const { platform } = req.params;
+    // Obtener el access token del usuario de la base de datos
+    // const accessToken = await getTokenFromDB(req.user.id, 'tiktok');
     
-    const [platformData] = await db.select().from(platforms).where(
-      and(
-        eq(platforms.userId, userId),
-        eq(platforms.platform, platform)
-      )
-    );
-    
-    if (!platformData) {
-      return res.status(404).json({ error: 'Platform not connected' });
-    }
-    
-    let stats;
-    switch (platform) {
-      case 'tiktok':
-        stats = await getTikTokStats(platformData.accessToken);
-        break;
-      case 'youtube':
-        stats = await getYouTubeStats(platformData.accessToken);
-        break;
-      case 'instagram':
-        stats = await getInstagramStats(platformData.accessToken, platformData.platformUserId);
-        break;
-      case 'twitch':
-        stats = await getTwitchStats(platformData.accessToken, process.env.TWITCH_CLIENT_ID!);
-        break;
-      default:
-        return res.status(400).json({ error: 'Invalid platform' });
-    }
-    
-    res.json({ stats });
+    // Por ahora devolvemos datos mock
+    res.json({
+      platform: 'tiktok',
+      stats: {
+        followers: 45200,
+        views: 1200000,
+        likes: 89400,
+        videos: 156
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para obtener stats de YouTube
+router.get('/youtube', authMiddleware, async (req: any, res: any) => {
+  try {
+    // Por ahora devolvemos datos mock
+    res.json({
+      platform: 'youtube',
+      stats: {
+        subscribers: 128500,
+        views: 3800000,
+        videos: 234
+      }
+    });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
