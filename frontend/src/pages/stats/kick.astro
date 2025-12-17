@@ -1,0 +1,73 @@
+---
+// frontend/src/pages/stats/kick.astro
+import MainLayout from '../../layouts/MainLayout.astro';
+import Sidebar from '../../components/dashboard/Sidebar';
+import Header from '../../components/layout/Header';
+import StatsCardWrapper from '../../components/dashboard/StatsCardWrapper';
+import LineChart from '../../components/charts/LineChart';
+---
+
+<MainLayout title="Kick Stats">
+  <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <Sidebar client:load />
+    <div class="flex-1 ml-64">
+      <Header client:load />
+      
+      <main class="pt-20 p-8">
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="text-4xl">🚀</div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Kick Analytics</h1>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400">Track your Kick streaming performance</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCardWrapper
+            client:load
+            title="Followers"
+            value="12.4K"
+            change={22.1}
+            icon="Users"
+            color="bg-green-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Peak Viewers"
+            value="2.3K"
+            change={18.5}
+            icon="Eye"
+            color="bg-green-600"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Reactions"
+            value="34.2K"
+            change={25.3}
+            icon="Heart"
+            color="bg-emerald-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Stream Hours"
+            value="156"
+            change={12.7}
+            icon="Zap"
+            color="bg-teal-500"
+          />
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Average Viewers</h2>
+          <LineChart
+            client:load
+            data={[450, 520, 680, 750, 820, 950, 1100]}
+            labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+            title="Viewers"
+            color="rgb(34, 197, 94)"
+          />
+        </div>
+      </main>
+    </div>
+  </div>
+</MainLayout>

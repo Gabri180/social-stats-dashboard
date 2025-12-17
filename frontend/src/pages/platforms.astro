@@ -1,0 +1,99 @@
+---
+// frontend/src/pages/platforms.astro
+import MainLayout from '../layouts/MainLayout.astro';
+import Sidebar from '../components/dashboard/Sidebar';
+import Header from '../components/layout/Header';
+import ConnectPlatform from '../components/dashboard/ConnectPlatform';
+---
+
+<MainLayout title="Platforms">
+  <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <Sidebar client:load />
+    
+    <div class="flex-1 ml-64">
+      <Header client:load />
+      
+      <main class="pt-20 p-8">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Connect Platforms</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">Connect your social media accounts to start tracking your analytics</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="youtube-platform"></div>
+          <div id="tiktok-platform"></div>
+          <div id="instagram-platform"></div>
+          <div id="twitch-platform"></div>
+          <div id="kick-platform"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    import { createRoot } from 'react-dom/client';
+    import { createElement } from 'react';
+    import ConnectPlatform from '../components/dashboard/ConnectPlatform';
+
+    const platforms = [
+      {
+        id: 'youtube',
+        name: 'YouTube',
+        icon: '▶️',
+        description: 'Connect your YouTube channel',
+        endpoint: '/api/oauth/youtube'
+      },
+      {
+        id: 'tiktok',
+        name: 'TikTok',
+        icon: '🎵',
+        description: 'Connect your TikTok account',
+        endpoint: '/api/oauth/tiktok'
+      },
+      {
+        id: 'instagram',
+        name: 'Instagram',
+        icon: '📸',
+        description: 'Connect your Instagram account',
+        endpoint: '/api/oauth/instagram'
+      },
+      {
+        id: 'twitch',
+        name: 'Twitch',
+        icon: '🎮',
+        description: 'Connect your Twitch channel',
+        endpoint: '/api/oauth/twitch'
+      },
+      {
+        id: 'kick',
+        name: 'Kick',
+        icon: '🚀',
+        description: 'Connect your Kick channel',
+        endpoint: '/api/oauth/kick'
+      }
+    ];
+
+    platforms.forEach(platform => {
+      const container = document.getElementById(`${platform.id}-platform`);
+      if (container) {
+        const root = createRoot(container);
+        root.render(
+          createElement(ConnectPlatform, {
+            name: platform.name,
+            icon: platform.icon,
+            description: platform.description,
+            connected: false,
+            onConnect: () => {
+              const token = localStorage.getItem('token');
+              if (!token) {
+                window.location.href = '/login';
+                return;
+              }
+              window.location.href = `http://localhost:3001${platform.endpoint}?token=${token}`;
+            }
+          })
+        );
+      }
+    });
+  </script>
+</MainLayout>

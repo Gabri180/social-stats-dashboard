@@ -1,0 +1,129 @@
+// backend/src/routes/oauthRoutes.ts
+import { Router } from 'express';
+import { authMiddleware } from '../middleware/authMiddleware';
+import { getTikTokAuthUrl, getTikTokAccessToken } from '../services/oauth/tiktokOAuth';
+import { getYouTubeAuthUrl, getYouTubeTokens } from '../services/oauth/youtubeOAuth';
+import { getInstagramAuthUrl, getInstagramAccessToken, getInstagramLongLivedToken } from '../services/oauth/instagramOAuth';
+import { getTwitchAuthUrl, getTwitchAccessToken } from '../services/oauth/twitchOAuth';
+import { db } from '../db';
+import { platforms } from '../db/schema';
+
+const router = Router();
+
+// TikTok
+router.get('/tiktok', authMiddleware, (req, res) => {
+  const authUrl = getTikTokAuthUrl();
+  res.redirect(authUrl);
+});
+
+router.get('/tiktok/callback', authMiddleware, async (req, res) => {
+  try {
+    const { code } = req.query;
+    const userId = (req as any).userId;
+    
+    const tokenData = await getTikTokAccessToken(code as string);
+    
+    await db.insert(platforms).values({
+      userId,
+      platform: 'tiktok',
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      tokenExpiry: new Date(Date.now() + tokenData.expires_in * 1000),
+      platformUserId: tokenData.open_id,
+      platformUsername: tokenData.display_name
+    });
+    
+    res.redirect('http://localhost:4321/platforms?success=tiktok');
+  } catch (error: any) {
+    res.redirect('http://localhost:4321/platforms?error=' + error.message);
+  }
+});
+
+// YouTube
+router.get('/youtube', authMiddleware, (req, res) => {
+  const authUrl = getYouTubeAuthUrl();
+  res.redirect(authUrl);
+});
+
+router.get('/youtube/callback', authMiddleware, async (req, res) => {
+  try {
+    const { code } = req.query;
+    const userId = (req as any).userId;
+    
+    const tokens = await getYouTubeTokens(code as string);
+    
+    await db.insert(platforms).values({
+      userId,
+      platform: 'youtube',
+      accessToken: tokens.access_token!,
+      refreshToken: tokens.refresh_token || null,
+      tokenExpiry: new Date(Date.now() + (tokens.expiry_date || 3600 * 1000)),
+      platformUserId: 'youtube_user',
+      platformUsername: 'YouTube Channel'
+    });
+    
+    res.redirect('http://localhost:4321/platforms?success=youtube');
+  } catch (error: any) {
+    res.redirect('http://localhost:4321/platforms?error=' + error.message);
+  }
+});
+
+// Instagram
+router.get('/instagram', authMiddleware, (req, res) => {
+  const authUrl = getInstagramAuthUrl();
+  res.redirect(authUrl);
+});
+
+router.get('/instagram/callback', authMiddleware, async (req, res) => {
+  try {
+    const { code } = req.query;
+    const userId = (req as any).userId;
+    
+    const tokenData = await getInstagramAccessToken(code as string);
+    const longLivedToken = await getInstagramLongLivedToken(tokenData.access_token);
+    
+    await db.insert(platforms).values({
+      userId,
+      platform: 'instagram',
+      accessToken: longLivedToken.access_token,
+      tokenExpiry: new Date(Date.now() + longLivedToken.expires_in * 1000),
+      platformUserId: tokenData.user_id,
+      platformUsername: 'Instagram'
+    });
+    
+    res.redirect('http://localhost:4321/platforms?success=instagram');
+  } catch (error: any) {
+    res.redirect('http://localhost:4321/platforms?error=' + error.message);
+  }
+});
+
+// Twitch
+router.get('/twitch', authMiddleware, (req, res) => {
+  const authUrl = getTwitchAuthUrl();
+  res.redirect(authUrl);
+});
+
+router.get('/twitch/callback', authMiddleware, async (req, res) => {
+  try {
+    const { code } = req.query;
+    const userId = (req as any).userId;
+    
+    const tokenData = await getTwitchAccessToken(code as string);
+    
+    await db.insert(platforms).values({
+      userId,
+      platform: 'twitch',
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      tokenExpiry: new Date(Date.now() + tokenData.expires_in * 1000),
+      platformUserId: 'twitch_user',
+      platformUsername: 'Twitch'
+    });
+    
+    res.redirect('http://localhost:4321/platforms?success=twitch');
+  } catch (error: any) {
+    res.redirect('http://localhost:4321/platforms?error=' + error.message);
+  }
+});
+
+export default router;

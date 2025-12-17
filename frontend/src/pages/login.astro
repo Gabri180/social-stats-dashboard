@@ -1,0 +1,11 @@
+---
+// frontend/src/pages/login.astro
+import MainLayout from '../layouts/MainLayout.astro';
+import LoginForm from '../components/auth/LoginForm';
+---
+
+<MainLayout title="Login">
+  <div class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+    <LoginForm client:load />
+  </div>
+</MainLayout>

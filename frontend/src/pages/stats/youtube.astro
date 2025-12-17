@@ -1,0 +1,87 @@
+---
+// frontend/src/pages/stats/youtube.astro
+import MainLayout from '../../layouts/MainLayout.astro';
+import Sidebar from '../../components/dashboard/Sidebar';
+import Header from '../../components/layout/Header';
+import StatsCardWrapper from '../../components/dashboard/StatsCardWrapper';
+import AreaChart from '../../components/charts/AreaChart';
+import LineChart from '../../components/charts/LineChart';
+---
+
+<MainLayout title="YouTube Stats">
+  <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <Sidebar client:load />
+    <div class="flex-1 ml-64">
+      <Header client:load />
+      
+      <main class="pt-20 p-8">
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="text-4xl">▶️</div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">YouTube Analytics</h1>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400">Monitor your YouTube channel performance</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCardWrapper
+            client:load
+            title="Subscribers"
+            value="128.5K"
+            change={8.2}
+            icon="Users"
+            color="bg-red-600"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Total Views"
+            value="3.8M"
+            change={12.4}
+            icon="Eye"
+            color="bg-red-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Likes"
+            value="234K"
+            change={15.8}
+            icon="ThumbsUp"
+            color="bg-green-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Watch Time"
+            value="45.2K hrs"
+            change={9.3}
+            icon="TrendingUp"
+            color="bg-blue-500"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Subscriber Growth</h2>
+            <AreaChart
+              client:load
+              data={[120000, 121500, 123200, 125000, 126800, 127900, 128500]}
+              labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+              title="Subscribers"
+              colors={{ border: 'rgb(220, 38, 38)', background: 'rgba(220, 38, 38, 0.2)' }}
+            />
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Average View Duration</h2>
+            <LineChart
+              client:load
+              data={[4.2, 4.5, 4.8, 5.1, 4.9, 5.3, 5.6]}
+              labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+              title="Minutes"
+              color="rgb(59, 130, 246)"
+            />
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</MainLayout>

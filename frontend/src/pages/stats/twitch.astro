@@ -1,0 +1,73 @@
+---
+// frontend/src/pages/stats/twitch.astro
+import MainLayout from '../../layouts/MainLayout.astro';
+import Sidebar from '../../components/dashboard/Sidebar';
+import Header from '../../components/layout/Header';
+import StatsCardWrapper from '../../components/dashboard/StatsCardWrapper';
+import AreaChart from '../../components/charts/AreaChart';
+---
+
+<MainLayout title="Twitch Stats">
+  <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <Sidebar client:load />
+    <div class="flex-1 ml-64">
+      <Header client:load />
+      
+      <main class="pt-20 p-8">
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="text-4xl">🎮</div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Twitch Analytics</h1>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400">Track your streaming performance</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatsCardWrapper
+            client:load
+            title="Followers"
+            value="34.2K"
+            change={9.4}
+            icon="Users"
+            color="bg-purple-600"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Avg Viewers"
+            value="1.2K"
+            change={12.8}
+            icon="Eye"
+            color="bg-purple-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Chat Messages"
+            value="45.8K"
+            change={15.2}
+            icon="MessageSquare"
+            color="bg-indigo-500"
+          />
+          <StatsCardWrapper
+            client:load
+            title="Subs"
+            value="892"
+            change={7.3}
+            icon="DollarSign"
+            color="bg-green-500"
+          />
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concurrent Viewers</h2>
+          <AreaChart
+            client:load
+            data={[850, 920, 1100, 1250, 1180, 1350, 1420]}
+            labels={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+            title="Viewers"
+            colors={{ border: 'rgb(139, 92, 246)', background: 'rgba(139, 92, 246, 0.2)' }}
+          />
+        </div>
+      </main>
+    </div>
+  </div>
+</MainLayout>

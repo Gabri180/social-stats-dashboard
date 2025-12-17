@@ -1,0 +1,11 @@
+---
+// frontend/src/pages/register.astro
+import MainLayout from '../layouts/MainLayout.astro';
+import RegisterForm from '../components/auth/RegisterForm';
+---
+
+<MainLayout title="Register">
+  <div class="min-h-screen bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center p-4">
+    <RegisterForm client:load />
+  </div>
+</MainLayout>
